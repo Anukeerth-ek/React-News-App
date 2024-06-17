@@ -19,7 +19,7 @@ const Navbar = () => {
           <header>
                <nav>
                     <div className="flex flex-wrap items-center justify-between md:justify-around py-5 dark:bg-blue-950 text-white px-3 md:px-0">
-                         <h3>News 24</h3>
+                         <h3 className="text-lg md:text-2xl font-bold">News 24</h3>
                          <div className="flex items-center relative  md:w-60">
                               <input
                                    type="text"
@@ -42,10 +42,14 @@ const Navbar = () => {
                                    })}
                               </ul>
                          </div>
-                         <div className="text-black bg-white text-lg p-1 relative right-5 md:static rounded-md">
+                         <div className="flex items-center lg:border px-2 py-[2px]">
+                         <span className="hidden lg:block">Saved Post</span>
+                         <div className="text-black lg:text-white bg-white lg:bg-transparent  text-lg p-1 relative right-5 md:static rounded-md">
+                           
                               <FaRegHeart />
 
                               
+                         </div>
                          </div>
 
                          <div className="md:hidden">
@@ -58,7 +62,7 @@ const Navbar = () => {
                                    {navLinks.map((item, index) => {
                                         return (
                                              <Link to={item.path} key={index}>
-                                                  <li className=" mb-2 text-black md:text-white py-[6px] px-4">{item?.link}</li>
+                                                  <li className=" mb-2 text-black md:text-white py-[6px] px-4 hover:bg-gray-200">{item?.link}</li>
                                              </Link>
                                         );
                                    })}
