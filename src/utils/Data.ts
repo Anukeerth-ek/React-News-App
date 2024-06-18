@@ -28,3 +28,35 @@ export const navLinks:NavLinks[] = [
         downArrow: false
     },
 ]
+interface NewsCategory  {
+    id:number,
+    link:string
+}
+
+export const categories:NewsCategory[] = [
+    {
+        id:0,
+        link: "Technology",
+
+    },
+    {
+        id:1,
+        link: "Business",
+
+    },
+    {
+        id:2,
+        link: "Sports",
+
+    },
+    {
+        id:3,
+        link: "Entertainment",
+
+    },
+    {
+        id:4,
+        link: "Health",
+
+    },
+]

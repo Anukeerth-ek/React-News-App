@@ -1,23 +1,50 @@
 import { Link } from "react-router-dom";
-import { navLinks } from "../../utils/Data";
+import { categories, navLinks } from "../../utils/Data";
 import { IoSearch } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa6";
 import { CiMenuFries } from "react-icons/ci";
 import { RxCross1 } from "react-icons/rx";
 import { IoMdArrowDropdown } from "react-icons/io";
-
 import { useState } from "react";
 
 const Navbar = () => {
      const [isMenuOpen, setIsMenuOpen] = useState(false);
+     const [showNewsDropdown, setShowNewsDropdown] = useState(false); // State for News dropdown
 
-     // for toggling menu
+     // Toggle menu for mobile view
      const handleToggleMenu = () => {
           setIsMenuOpen(!isMenuOpen);
      };
 
-     // for dropown
-     const [showDropdown, setShowDropdown] = useState(false);
+     // Show News dropdown on mouse enter
+     const handleShowNewsCategory = () => {
+          setShowNewsDropdown(true);
+     };
+
+     // Hide News dropdown on mouse leave
+     const handleHideNewsCategory = () => {
+          setShowNewsDropdown(false);
+     };
+
+     const fetchCategoryNews = async (link:string) => {
+          const baseUrl = 'https://newsapi.org/v2/top-headlines';
+          const queryParameters = new URLSearchParams({
+              country: 'in',
+              category: link,
+              apiKey: import.meta.env.VITE_API_KEY, // Using API key from .env file
+          });
+
+          const urlWithParams = `${baseUrl}?${queryParameters.toString()}`;
+
+          try {
+              const res = await fetch(urlWithParams);
+              const data = await res.json();
+          
+          } catch (error) {
+              console.error('Error:', error);
+          }
+      };
+     
      return (
           <header>
                <nav>
@@ -34,46 +61,54 @@ const Navbar = () => {
                          </div>
 
                          <div className=" hidden md:inline">
-                              <ul className="flex ">
-                                   {navLinks.map((item, index) => {
-                                        return (
-                                             <>
-                                                  <Link to={item?.path} key={index} className="relative">
-                                                       <li
-                                                            className=" ml-8 text-black md:text-white inline-flex items-center "
-                                                            onMouseEnter={() => setShowDropdown(true)}
-                                                            onMouseLeave={() => setShowDropdown(false)}
-                                                       >
-                                                            {item?.link}
-                                                            {item?.downArrow && (
-                                                                 <span className="text-xl">
-                                                                      <IoMdArrowDropdown />
-                                                                 </span>
-                                                            )}
-                                                       </li>
-                                                  </Link>
-                                                  {item.downArrow && showDropdown ? (
-                                                       <div className="absolute top-8 flex flex-col bg-white text-black">
-                                                            <span>hello</span>
-                                                            <span>world</span>
-                                                            <span>software</span>
-                                                       </div>
-                                                  ) : (
-                                                       ""
+                              <ul className="flex">
+                                   {navLinks.map((item, index) => (
+                                        <Link to={item.path} key={index}>
+                                             <li
+                                                  className=" ml-8 text-black md:text-white inline-flex items-center relative"
+                                                  onMouseEnter={item.downArrow ? handleShowNewsCategory : undefined}
+                                                  onMouseLeave={item.downArrow ? handleHideNewsCategory : undefined}
+                                             >
+                                                  {item.link}
+                                                  {item.downArrow && (
+                                                       <span className="text-xl">
+                                                            <IoMdArrowDropdown />
+                                                       </span>
                                                   )}
-                                             </>
-                                        );
-                                   })}
+                                                  {item.downArrow && showNewsDropdown && (
+                                                       <div className="absolute duration-500 transition-opacity z-50 top-full left-0 bg-white text-black shadow-md py-2 px-4">
+                                                            <ul>
+                                                                 {categories.map((item) => {
+                                                                      return (
+                                                                           <li
+                                                                                key={item.id}
+                                                                                className="py-1 duration-150 hover:dark:text-red-600 hover:scale-95"
+                                                                                onClick={() => {
+                                                                                     fetchCategoryNews(item.link);
+                                                                                }}
+                                                                           >
+                                                                                {item.link}
+                                                                           </li>
+                                                                      );
+                                                                 })}
+                                                            </ul>
+                                                       </div>
+                                                  )}
+                                             </li>
+                                        </Link>
+                                   ))}
                               </ul>
                          </div>
+
                          {/* FOR SAVED POST */}
                          <div className="flex items-center lg:border rounded-md px-2 py-[2px]">
                               <span className="hidden lg:block lg:mr-1">Saved Post</span>
-                              <div className="text-black lg:text-white bg-white lg:bg-transparent  text-lg p-1 relative right-5 md:static rounded-md">
+                              <div className="text-black lg:text-white bg-white lg:bg-transparent text-lg p-1 relative right-5 md:static rounded-md">
                                    <FaRegHeart />
                               </div>
                          </div>
-                         {/* FOR MOBILE VIEW HAMBURGER ICON AND CROSS ICON  */}
+
+                         {/* FOR MOBILE VIEW HAMBURGER ICON AND CROSS ICON */}
                          <div className="md:hidden">
                               <button onClick={handleToggleMenu} className={isMenuOpen ? " text-black" : ""}>
                                    {isMenuOpen ? (
@@ -86,6 +121,7 @@ const Navbar = () => {
                               </button>
                          </div>
                     </div>
+
                     {/* for mobile view */}
                     <div
                          className={`${
@@ -93,15 +129,13 @@ const Navbar = () => {
                          }`}
                     >
                          <ul className={`${isMenuOpen ? "flex flex-col" : ""}`}>
-                              {navLinks.map((item, index) => {
-                                   return (
-                                        <Link to={item?.path} key={index}>
-                                             <li className=" mb-2 text-black md:text-white py-[6px] px-4 hover:bg-gray-200">
-                                                  {item?.link}
-                                             </li>
-                                        </Link>
-                                   );
-                              })}
+                              {navLinks.map((item, index) => (
+                                   <Link to={item.path} key={index}>
+                                        <li className=" mb-2 text-black md:text-white py-[6px] px-4 hover:bg-gray-200">
+                                             {item.link}
+                                        </li>
+                                   </Link>
+                              ))}
                          </ul>
                     </div>
                </nav>

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
+import Pagination from "../pagination/Pagination";
 
 const NewsCard = () => {
-    // handle hover on item.description
+     // handle hover on item.description
      const [hoveredItem, setHoveredItem] = useState(null);
 
      // Event handler to set hoveredItem to the item id on mouse enter
-     const handleMouseEnter = (itemIndex:any) => {
+     const handleMouseEnter = (itemIndex: any) => {
           setHoveredItem(itemIndex);
      };
 
@@ -16,20 +17,16 @@ const NewsCard = () => {
           setHoveredItem(null);
      };
 
-    //  for changing the fav icon
+     //  for changing the fav icon
 
-const [toggleFavIcon, setToggleFavIcon] = useState(false)
+     const [toggleFavIcon, setToggleFavIcon] = useState(false);
 
-const handleIconClick = (event:any) => {
-     event.stopPropagation();
-     setToggleFavIcon(!toggleFavIcon);
- };
-
-
-
+     const handleIconClick = (event: any) => {
+          event.stopPropagation();
+          setToggleFavIcon(!toggleFavIcon);
+     };
 
      const [newsData, setNewsData] = useState<any>([]);
-     console.log("data", newsData);
 
      const formatDate = (dateString: string) => {
           const givenDate = new Date(dateString);
@@ -63,29 +60,42 @@ const handleIconClick = (event:any) => {
           }
      }, []);
 
+     const [currentPage, setCurrentPage] = useState<any>(1); // ******first step
+     const itemPerPage = 17; // ******second step
+
+     // lets calculate the first index and last index  _______________    // ******third step
+     const lastItemIndex = currentPage * itemPerPage;
+     const firstItemIndex = lastItemIndex - itemPerPage;
+
+     const currentItem = newsData.slice(firstItemIndex, lastItemIndex);
+
+     const handlePageChange = (pageNumber: number) => {
+          // fourth step
+          setCurrentPage(pageNumber);
+     };
+
      return (
           <section>
                <div>
                     <ul className="flex flex-wrap justify-between ">
-                         {newsData.slice(1).map((item: any, index: number) =>
+                         {currentItem.slice(1).map((item: any, index: number) =>
                               // Skip rendering if urlToImage or title is empty
                               !item.urlToImage || !item.title ? null : (
-                                
                                    <li
                                         key={index}
                                         className="w-full md:w-1/2 lg:w-1/4 py-1 md:p-2 cursor-pointer relative group"
-                                        onClick={()=> window.location.href=item.url}
+                                        onClick={() => (window.location.href = item.url)}
                                    >
                                         <div className="border p-4">
-                                             <div className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                      onClick={()=> handleIconClick(index)}
+                                             <div
+                                                  className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                  onClick={() => handleIconClick(index)}
                                              >
-                                              {toggleFavIcon ? <FaHeart/> : <FaRegHeart />}
+                                                  {toggleFavIcon ? <FaHeart /> : <FaRegHeart />}
                                              </div>
                                              {item.urlToImage && (
                                                   <img
                                                        src={item.urlToImage}
-                                                       
                                                        className="w-full h-48 flex-wrap object-cover mb-4 rounded-md group-hover:h-24 duration-500 "
                                                   />
                                              )}
@@ -120,10 +130,15 @@ const handleIconClick = (event:any) => {
                                              </div>
                                         </div>
                                    </li>
-                                
                               )
                          )}
                     </ul>
+                    {/* <Pagination
+                         currentPage={currentPage}
+                         itemsPerPage={itemsPerPage}
+                         onPageChange={handlePageChange}
+                         totalItems={newsData.length}
+                    /> */}
                </div>
           </section>
      );
