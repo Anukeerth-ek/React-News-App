@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.full-description {
+    text-overflow: clip;
+    white-space: normal;
+  }
