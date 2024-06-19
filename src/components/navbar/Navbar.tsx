@@ -7,19 +7,13 @@ import { RxCross1 } from "react-icons/rx";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchCategoryNews } from "../../redux/CategoryNewsSlice"
-import { AppDispatch } from '../../redux/Store';
+import { fetchCategoryNews } from "../../redux/CategoryNewsSlice";
+import { AppDispatch } from "../../redux/Store";
 const Navbar = () => {
-     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-     const [showNewsDropdown, setShowNewsDropdown] = useState<boolean>(false); // State for News dropdown
-   
+     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // For mobile view
+     const [showNewsDropdown, setShowNewsDropdown] = useState<boolean>(false); // State for dropdown
 
      const dispatch = useDispatch<AppDispatch>();
-    
-     // Toggle menu for mobile view
-     const handleToggleMenu = () => {
-          setIsMenuOpen(!isMenuOpen);
-     };
 
      // Show News dropdown on mouse enter
      const handleShowNewsCategory = () => {
@@ -31,26 +25,7 @@ const Navbar = () => {
           setShowNewsDropdown(false);
      };
 
-     // const fetchCategoryNews = async (link:string) => {
-     //      const baseUrl = 'https://newsapi.org/v2/top-headlines';
-     //      const queryParams = new URLSearchParams({
-     //          country: 'in',
-     //          category: link,
-     //          apiKey: import.meta.env.VITE_API_KEY, // Using API key from .env file
-     //      });
-
-     //      const urlWithParams = `${baseUrl}?${queryParams.toString()}`;
-
-     //      try {
-     //          const res = await fetch(urlWithParams);
-     //          const data = await res.json();
-     //          setNewsCateogy(data)
-          
-     //      } catch (error) {
-     //          console.error('Error:', error);
-     //      }
-     //  };
-     const handleCategoryClick = (category:string) => {
+     const handleCategoryClick = (category: string) => {
           dispatch(fetchCategoryNews(category));
      };
 
@@ -69,7 +44,7 @@ const Navbar = () => {
                               </div>
                          </div>
 
-                         <div className=" hidden md:inline">
+                         <div className="hidden md:inline">
                               <ul className="flex">
                                    {navLinks.map((item, index) => (
                                         <Link to={item.path} key={index}>
@@ -119,7 +94,10 @@ const Navbar = () => {
 
                          {/* FOR MOBILE VIEW HAMBURGER ICON AND CROSS ICON */}
                          <div className="md:hidden">
-                              <button onClick={handleToggleMenu} className={isMenuOpen ? " text-black" : ""}>
+                              <button
+                                   onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                   className={isMenuOpen ? " text-black" : ""}
+                              >
                                    {isMenuOpen ? (
                                         <div className="relative z-50 top-[6px]">
                                              <RxCross1 />
