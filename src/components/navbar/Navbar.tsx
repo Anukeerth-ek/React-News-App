@@ -6,11 +6,16 @@ import { CiMenuFries } from "react-icons/ci";
 import { RxCross1 } from "react-icons/rx";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
-
+import { useDispatch } from "react-redux";
+import { fetchCategoryNews } from "../../redux/CategoryNewsSlice"
+import { AppDispatch } from '../../redux/Store';
 const Navbar = () => {
-     const [isMenuOpen, setIsMenuOpen] = useState(false);
-     const [showNewsDropdown, setShowNewsDropdown] = useState(false); // State for News dropdown
+     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+     const [showNewsDropdown, setShowNewsDropdown] = useState<boolean>(false); // State for News dropdown
+   
 
+     const dispatch = useDispatch<AppDispatch>();
+    
      // Toggle menu for mobile view
      const handleToggleMenu = () => {
           setIsMenuOpen(!isMenuOpen);
@@ -26,25 +31,29 @@ const Navbar = () => {
           setShowNewsDropdown(false);
      };
 
-     const fetchCategoryNews = async (link:string) => {
-          const baseUrl = 'https://newsapi.org/v2/top-headlines';
-          const queryParameters = new URLSearchParams({
-              country: 'in',
-              category: link,
-              apiKey: import.meta.env.VITE_API_KEY, // Using API key from .env file
-          });
+     // const fetchCategoryNews = async (link:string) => {
+     //      const baseUrl = 'https://newsapi.org/v2/top-headlines';
+     //      const queryParams = new URLSearchParams({
+     //          country: 'in',
+     //          category: link,
+     //          apiKey: import.meta.env.VITE_API_KEY, // Using API key from .env file
+     //      });
 
-          const urlWithParams = `${baseUrl}?${queryParameters.toString()}`;
+     //      const urlWithParams = `${baseUrl}?${queryParams.toString()}`;
 
-          try {
-              const res = await fetch(urlWithParams);
-              const data = await res.json();
+     //      try {
+     //          const res = await fetch(urlWithParams);
+     //          const data = await res.json();
+     //          setNewsCateogy(data)
           
-          } catch (error) {
-              console.error('Error:', error);
-          }
-      };
-     
+     //      } catch (error) {
+     //          console.error('Error:', error);
+     //      }
+     //  };
+     const handleCategoryClick = (category:string) => {
+          dispatch(fetchCategoryNews(category));
+     };
+
      return (
           <header>
                <nav>
@@ -84,7 +93,7 @@ const Navbar = () => {
                                                                                 key={item.id}
                                                                                 className="py-1 duration-150 hover:dark:text-red-600 hover:scale-95"
                                                                                 onClick={() => {
-                                                                                     fetchCategoryNews(item.link);
+                                                                                     handleCategoryClick(item.link);
                                                                                 }}
                                                                            >
                                                                                 {item.link}

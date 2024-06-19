@@ -2,146 +2,141 @@ import { useEffect, useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import Pagination from "../pagination/Pagination";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
 
 const NewsCard = () => {
-     // handle hover on item.description
-     const [hoveredItem, setHoveredItem] = useState(null);
+    const { news, status, error } = useSelector((state: RootState) => state.categoryNews);
 
-     // Event handler to set hoveredItem to the item id on mouse enter
-     const handleMouseEnter = (itemIndex: any) => {
-          setHoveredItem(itemIndex);
-     };
+    // Handle hover on item.description
+    const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
-     // Event handler to reset hoveredItem to null on mouse leave
-     const handleMouseLeave = () => {
-          setHoveredItem(null);
-     };
+    const handleMouseEnter = (itemIndex: number) => {
+        setHoveredItem(itemIndex);
+    };
 
-     //  for changing the fav icon
+    const handleMouseLeave = () => {
+        setHoveredItem(null);
+    };
 
-     const [toggleFavIcon, setToggleFavIcon] = useState(false);
+    // For changing the fav icon
+    const [toggleFavIcon, setToggleFavIcon] = useState<boolean>(false);
 
-     const handleIconClick = (event: any) => {
-          event.stopPropagation();
-          setToggleFavIcon(!toggleFavIcon);
-     };
+    const handleIconClick = (event: React.MouseEvent, index: number) => {
+        event.stopPropagation();
+        setToggleFavIcon(!toggleFavIcon);
+    };
 
-     const [newsData, setNewsData] = useState<any>([]);
-
-     const formatDate = (dateString: string) => {
-          const givenDate = new Date(dateString);
-          const currentDate = new Date();
-
-          const diffInMs = currentDate.getTime() - givenDate.getTime();
-          const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-          if (diffInDays === 0) {
-               // Today
-               return givenDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-          } else if (diffInDays === 1) {
-               // 1 day ago
-               return "1 day ago";
+    
+    const formatDate = (dateString: string) => {
+         const givenDate = new Date(dateString);
+        const currentDate = new Date();
+        
+        const diffInMs = currentDate.getTime() - givenDate.getTime();
+        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+        
+        if (diffInDays === 0) {
+            return givenDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+        } else if (diffInDays === 1) {
+            return "1 day ago";
           } else if (diffInDays < 3) {
-               // N days ago
                return `${diffInDays} days ago`;
-          } else {
-               // Format the date as Month-DD-YYYY for dates older than 3 days
-               return givenDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        } else {
+             return givenDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
           }
      };
+     const [newsData, setNewsData] = useState<any[]>([]);
 
-     useEffect(() => {
-          try {
-               fetch(import.meta.env.VITE_API_HEADLINES)
+    useEffect(() => {
+        if (news.length === 0) {
+            try {
+                fetch(import.meta.env.VITE_API_HEADLINES)
                     .then((res) => res.json())
                     .then((data) => setNewsData(data.articles));
-          } catch (error) {
-               console.log("Error is ", error);
-          }
-     }, []);
+            } catch (error) {
+                console.log("Error is ", error);
+            }
+        }
+    }, [news]);
 
-     const [currentPage, setCurrentPage] = useState<any>(1); // ******first step
-     const itemPerPage = 17; // ******second step
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemPerPage = 16;
 
-     // lets calculate the first index and last index  _______________    // ******third step
-     const lastItemIndex = currentPage * itemPerPage;
-     const firstItemIndex = lastItemIndex - itemPerPage;
+    const lastItemIndex = currentPage * itemPerPage;
+    const firstItemIndex = lastItemIndex - itemPerPage;
 
-     const currentItem = newsData.slice(firstItemIndex, lastItemIndex);
+    const dataSource = news.length > 0 ? news : newsData;
+    const currentItem = dataSource.slice(firstItemIndex, lastItemIndex);
 
-     const handlePageChange = (pageNumber: number) => {
-          // fourth step
-          setCurrentPage(pageNumber);
-     };
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
 
-     return (
-          <section>
-               <div>
-                    <ul className="flex flex-wrap justify-between ">
-                         {currentItem.slice(1).map((item: any, index: number) =>
-                              // Skip rendering if urlToImage or title is empty
-                              !item.urlToImage || !item.title ? null : (
-                                   <li
-                                        key={index}
-                                        className="w-full md:w-1/2 lg:w-1/4 py-1 md:p-2 cursor-pointer relative group"
-                                        onClick={() => (window.location.href = item.url)}
-                                   >
-                                        <div className="border p-4">
-                                             <div
-                                                  className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                                  onClick={() => handleIconClick(index)}
-                                             >
-                                                  {toggleFavIcon ? <FaHeart /> : <FaRegHeart />}
-                                             </div>
-                                             {item.urlToImage && (
-                                                  <img
-                                                       src={item.urlToImage}
-                                                       className="w-full h-48 flex-wrap object-cover mb-4 rounded-md group-hover:h-24 duration-500 "
-                                                  />
-                                             )}
-                                             {item.title && (
-                                                  <p className="font-bold text-xl mb-2 group-hover:text-lg">
-                                                       {item.title.length > 37 ? item.title.slice(0, 37) : item.title}
-                                                  </p>
-                                             )}
-                                             {item.description && (
-                                                  <p
-                                                       key={index}
-                                                       className={`mb-2 duration-500  ${
-                                                            hoveredItem === index ? " delay-500" : ""
-                                                       }`}
-                                                       onMouseEnter={() => handleMouseEnter(index)}
-                                                       onMouseLeave={handleMouseLeave}
-                                                  >
-                                                       {hoveredItem === index
-                                                            ? item.description // Show full description when hovered
-                                                            : item.description.length > 105
-                                                            ? item.description.slice(0, 105) + "..." // Truncate description
-                                                            : item.description}
-                                                  </p>
-                                             )}
-                                             <div className="flex justify-between">
-                                                  {item.author && (
-                                                       <span className="text-sm text-red-500">{item.author}</span>
-                                                  )}
-                                                  {item.publishedAt && (
-                                                       <span className="text-sm">• {formatDate(item.publishedAt)}</span>
-                                                  )}
-                                             </div>
-                                        </div>
-                                   </li>
-                              )
-                         )}
-                    </ul>
-                    {/* <Pagination
-                         currentPage={currentPage}
-                         itemsPerPage={itemsPerPage}
-                         onPageChange={handlePageChange}
-                         totalItems={newsData.length}
-                    /> */}
-               </div>
-          </section>
-     );
+    return (
+        <section>
+            <div>
+                <ul className="flex flex-wrap justify-between ">
+                    {currentItem.map((item, index) =>
+                        !item.urlToImage || !item.title ? null : (
+                            <li
+                                key={index}
+                                className="w-full md:w-1/2 lg:w-1/4 py-1 md:p-2 cursor-pointer relative group"
+                                onClick={() => (window.location.href = item.url)}
+                            >
+                                <div className="border p-4">
+                                    <div
+                                        className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        onClick={(event) => handleIconClick(event, index)}
+                                    >
+                                        {toggleFavIcon ? <FaHeart /> : <FaRegHeart />}
+                                    </div>
+                                    {item.urlToImage && (
+                                        <img
+                                            src={item.urlToImage}
+                                            className="w-full h-48 flex-wrap object-cover mb-4 rounded-md group-hover:h-24 duration-500"
+                                        />
+                                    )}
+                                    {item.title && (
+                                        <p className="font-bold text-xl mb-2 group-hover:text-lg">
+                                            {item.title.length > 37 ? item.title.slice(0, 37) : item.title}
+                                        </p>
+                                    )}
+                                    {item.description && (
+                                        <p
+                                            key={index}
+                                            className={`mb-2 duration-500 ${hoveredItem === index ? " delay-500" : ""}`}
+                                            onMouseEnter={() => handleMouseEnter(index)}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {hoveredItem === index
+                                                ? item.description
+                                                : item.description.length > 105
+                                                ? item.description.slice(0, 105) + "..."
+                                                : item.description}
+                                        </p>
+                                    )}
+                                    <div className="flex justify-between">
+                                        {item.author && (
+                                            <span className="text-sm text-red-500">{item.author}</span>
+                                        )}
+                                        {item.publishedAt && (
+                                            <span className="text-sm">• {formatDate(item.publishedAt)}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </li>
+                        )
+                    )}
+                </ul>
+                <Pagination
+                    currentPage={currentPage}
+                    itemsPerPage={itemPerPage}
+                    onPageChange={handlePageChange}
+                    totalItems={dataSource.length}
+                />
+            </div>
+        </section>
+    );
 };
 
 export default NewsCard;

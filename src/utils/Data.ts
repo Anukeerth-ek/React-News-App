@@ -36,26 +36,31 @@ interface NewsCategory  {
 export const categories:NewsCategory[] = [
     {
         id:0,
-        link: "Technology",
+        link: "All",
 
     },
     {
         id:1,
-        link: "Business",
+        link: "Technology",
 
     },
     {
         id:2,
-        link: "Sports",
+        link: "Business",
 
     },
     {
         id:3,
-        link: "Entertainment",
+        link: "Sports",
 
     },
     {
         id:4,
+        link: "Entertainment",
+
+    },
+    {
+        id:5,
         link: "Health",
 
     },
