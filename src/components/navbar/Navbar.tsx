@@ -12,6 +12,7 @@ import { AppDispatch } from "../../redux/Store";
 const Navbar = () => {
      const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // For mobile view
      const [showNewsDropdown, setShowNewsDropdown] = useState<boolean>(false); // State for dropdown
+     
 
      const dispatch = useDispatch<AppDispatch>();
 
@@ -29,17 +30,24 @@ const Navbar = () => {
           dispatch(fetchCategoryNews(category));
      };
 
+     // for client search handle
+     const handleSearchCategory = (event:any)=> {
+          dispatch(fetchCategoryNews(event.target.value))
+     }
+
      return (
           <header>
                <nav>
                     <div className="flex flex-wrap items-center justify-between md:justify-around py-5 dark:bg-blue-950 text-white px-3 md:px-0">
-                         <h3 className="text-lg md:text-2xl font-bold">News 24</h3>
+                         <Link to="/"><h3 className="text-lg md:text-2xl font-bold">News 24</h3></Link>
                          <div className="flex items-center relative  md:w-60">
                               <input
                                    type="text"
-                                   className="border border-orange-400 w-full py-1 rounded-md hidden md:block"
+                                   className={`border border-orange-400 w-32 md:w-full pl-2 py-1 rounded-md  md:block text-black`}
+                                   onChange={handleSearchCategory}
+                                    autoComplete="true"
                               />
-                              <div className="md:absolute md:right-3 text-black  bg-white p-1 rounded-lg md:rounded-none text-xl">
+                              <div className={`absolute right-1 md:right-3 text-black  bg-white p-1 rounded-lg md:rounded-none text-xl`} >
                                    <IoSearch />
                               </div>
                          </div>
@@ -87,7 +95,7 @@ const Navbar = () => {
                          {/* FOR SAVED POST */}
                          <div className="flex items-center lg:border rounded-md px-2 py-[2px]">
                               <span className="hidden lg:block lg:mr-1">Saved Post</span>
-                              <div className="text-black lg:text-white bg-white lg:bg-transparent text-lg p-1 relative right-5 md:static rounded-md">
+                              <div className={`text-black lg:text-white bg-white lg:bg-transparent text-lg p-1 relative right-5 md:static rounded-md `}>
                                    <FaRegHeart />
                               </div>
                          </div>
@@ -103,7 +111,9 @@ const Navbar = () => {
                                              <RxCross1 />
                                         </div>
                                    ) : (
-                                        <CiMenuFries />
+                                        <div className="text-white">
+                                             <CiMenuFries />
+                                        </div>
                                    )}
                               </button>
                          </div>
