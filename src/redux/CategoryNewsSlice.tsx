@@ -26,7 +26,7 @@ const initialState: CategoryNewsState = {
 export const fetchCategoryNews = createAsyncThunk(
     'categoryNews/fetchCategoryNews',
     async (category: string, { rejectWithValue }) => {
-        const baseUrl = 'https://newsapi.org/v2/top-headlines';
+        const baseUrl = 'https://newsapi.org/v2/top-headlines?';
         const queryParams = new URLSearchParams({
             country: 'in',
             category: category,
