@@ -4,10 +4,13 @@ import { FaHeart } from "react-icons/fa";
 import Pagination from "../pagination/Pagination";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import { ClipLoader } from "react-spinners";
 
 const NewsCard = () => {
-     const { news} = useSelector((state: RootState) => state.categoryNews);
-   
+     const { news } = useSelector((state: RootState) => state.categoryNews);
+
+     // for showing the loader if data is not present
+     const [loading, setLoading] = useState<boolean>(false);
 
      // Handle hover on item.description
      const [hoveredItem, setHoveredItem] = useState<number | null>(null);
@@ -23,13 +26,13 @@ const NewsCard = () => {
      // For changing the fav icon
      const [favoriteStates, setFavoriteStates] = useState<{ [key: number]: boolean }>({});
 
-    const handleIconClick = (event: React.MouseEvent, itemId: number) => {
-        event.stopPropagation();
-        setFavoriteStates(prevState => ({
-            ...prevState,
-            [itemId]: !prevState[itemId],
-        }));
-    };
+     const handleIconClick = (event: React.MouseEvent, itemId: number) => {
+          event.stopPropagation();
+          setFavoriteStates((prevState) => ({
+               ...prevState,
+               [itemId]: !prevState[itemId],
+          }));
+     };
 
      const formatDate = (dateString: string) => {
           const givenDate = new Date(dateString);
@@ -52,12 +55,15 @@ const NewsCard = () => {
 
      useEffect(() => {
           if (news.length === 0) {
+               setLoading(true);
                try {
                     fetch(import.meta.env.VITE_API_HEADLINES)
                          .then((res) => res.json())
                          .then((data) => setNewsData(data?.articles));
+                    setLoading(false);
                } catch (error) {
                     alert(error);
+                    setLoading(false);
                }
           }
      }, [news]);
@@ -79,6 +85,9 @@ const NewsCard = () => {
           <section>
                <div>
                     <ul className="flex flex-wrap justify-between ">
+                         {loading && (
+                              <ClipLoader loading={loading} size={150} aria-label="Loading Spinner" data-testid="loader" />
+                         )}
                          {currentItem?.map((item, index) =>
                               !item.urlToImage || !item.title ? null : (
                                    <li
@@ -91,7 +100,7 @@ const NewsCard = () => {
                                                   className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                                   onClick={(event) => handleIconClick(event, index)}
                                              >
-                                               {favoriteStates[index] ? <FaHeart /> : <FaRegHeart />}
+                                                  {favoriteStates[index] ? <FaHeart /> : <FaRegHeart />}
                                              </div>
                                              {item?.urlToImage && (
                                                   <img
