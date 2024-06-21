@@ -21,14 +21,15 @@ const NewsCard = () => {
      };
 
      // For changing the fav icon
-     const [toggleFavIcon, setToggleFavIcon] = useState<boolean>(false);
+     const [favoriteStates, setFavoriteStates] = useState<{ [key: number]: boolean }>({});
 
-     const handleIconClick = (event: React.MouseEvent, itemId: number) => {
-          event.stopPropagation();
-          if (itemId === itemId) {
-               setToggleFavIcon(!toggleFavIcon);
-          }
-     };
+    const handleIconClick = (event: React.MouseEvent, itemId: number) => {
+        event.stopPropagation();
+        setFavoriteStates(prevState => ({
+            ...prevState,
+            [itemId]: !prevState[itemId],
+        }));
+    };
 
      const formatDate = (dateString: string) => {
           const givenDate = new Date(dateString);
@@ -90,7 +91,7 @@ const NewsCard = () => {
                                                   className="text-red-500 bg-white py-2 px-2 rounded-lg absolute right-4 top-6 text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                                   onClick={(event) => handleIconClick(event, index)}
                                              >
-                                                  {toggleFavIcon ? <FaHeart /> : <FaRegHeart />}
+                                               {favoriteStates[index] ? <FaHeart /> : <FaRegHeart />}
                                              </div>
                                              {item?.urlToImage && (
                                                   <img

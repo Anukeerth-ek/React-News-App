@@ -93,7 +93,7 @@ const Navbar = () => {
                          </div>
 
                          {/* FOR SAVED POST */}
-                         <div className="flex items-center lg:border rounded-md px-2 py-[2px]">
+                         <div className="flex items-center lg:border rounded-md px-2 py-[2px] cursor-pointer">
                               <span className="hidden lg:block lg:mr-1">Saved Post</span>
                               <div className={`text-black lg:text-white bg-white lg:bg-transparent text-lg p-1 relative right-5 md:static rounded-md `}>
                                    <FaRegHeart />

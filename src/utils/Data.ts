@@ -65,3 +65,15 @@ export const categories:NewsCategory[] = [
 
     },
 ]
+
+export const footerLink = [
+    {
+        link: "About"
+    },
+    {
+        link: "Contact US"
+    },
+    {
+        link: "Privacy"
+    },
+]

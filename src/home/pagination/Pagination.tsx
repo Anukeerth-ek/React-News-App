@@ -40,7 +40,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, itemsPerPage, onPa
                </button>
                <p className="px-4 py-2 mx-1">
                     <span className="bg-gray-500 hover:bg-gray-400 py-1 px-3 text-white rounded-lg cursor-pointer">{currentPage}</span> of 
-                    <span className="ml-2 bg-gray-300 hover:bg-gray-400 py-1 px-3 text-white rounded-lg cursor-pointer">{totalPages}</span>
+                    <span className="ml-2 bg-gray-500 hover:bg-gray-400 py-1 px-3 text-white rounded-lg cursor-pointer">{totalPages}</span>
                </p>
                <button
                     onClick={handleNextPage}
