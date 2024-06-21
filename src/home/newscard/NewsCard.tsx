@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 
 const NewsCard = () => {
-     const { news, status, error } = useSelector((state: RootState) => state.categoryNews);
+     const { news} = useSelector((state: RootState) => state.categoryNews);
    
 
      // Handle hover on item.description
